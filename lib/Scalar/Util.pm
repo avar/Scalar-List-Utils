@@ -11,7 +11,7 @@ require Exporter;
 require List::Util; # List::Util loads the XS
 
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(blessed dualvar reftype weaken isweak tainted readonly openhandle refaddr isvstring looks_like_number set_prototype);
+our @EXPORT_OK = qw(blessed dualvar reftype weaken isweak tainted readonly openhandle refaddr isvstring looks_like_number set_prototype subname);
 our $VERSION    = "1.23_03";
 $VERSION   = eval $VERSION;
 
@@ -52,7 +52,7 @@ Scalar::Util - A selection of general-utility scalar subroutines
 =head1 SYNOPSIS
 
     use Scalar::Util qw(blessed dualvar isweak readonly refaddr reftype tainted
-                        weaken isvstring looks_like_number set_prototype);
+                        weaken isvstring looks_like_number set_prototype subname);
                         # and other useful utils appearing below
 
 =head1 DESCRIPTION
@@ -167,6 +167,23 @@ undef. Returns the CODEREF.
 
     set_prototype \&foo, '$$';
 
+=item subname NAME, CODEREF
+
+    subname $name, $subref;
+
+    $subref = subname foo => sub { ... };
+
+Assigns a new name to referenced sub.  If package specification is omitted in 
+the name, then the current package is used.  The return value is the sub.
+
+The name is only used for informative routines (caller, Carp, etc).  You won't 
+be able to actually invoke the sub by the given name.  To allow that, you need 
+to do glob-assignment yourself.
+
+Note that for anonymous closures (subs that reference lexicals declared outside 
+the sub itself) you can name each instance of the closure differently, which 
+can be very useful for debugging.
+
 =item tainted EXPR
 
 Return true if the result of EXPR is tainted
@@ -257,5 +274,8 @@ Except weaken and isweak which are
 Copyright (c) 1999 Tuomas J. Lukka <lukka@iki.fi>. All rights reserved.
 This program is free software; you can redistribute it and/or modify it
 under the same terms as perl itself.
+
+And subname which was imported from L<Sub::Name> by Matthijs van Duin
+<xmath@cpan.org>.
 
 =cut
